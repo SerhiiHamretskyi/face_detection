@@ -26,6 +26,12 @@ def get_path_to_cur_dir(name):
     return nwd
 
 
+def check_if_folder_empty(path):
+    if not os.listdir(path):
+        print("No files found in the directory.")
+    else:
+        print("Some files found in the directory")
+
 def find_face_encodings(image_path):
     # Read the image
     image = cv.imread(image_path)
@@ -35,4 +41,12 @@ def find_face_encodings(image_path):
     return face_encodings[0] if face_encodings else None
 
 
+def start_camera_if_folder_empty(path):
+    check_if_folder_empty(path)
 
+    if not os.listdir(path):
+        print("Folder is empty. Start capturing the camera...")
+        return True
+    else:
+        print("Folder is not empty. Camera will not start.")
+        return False

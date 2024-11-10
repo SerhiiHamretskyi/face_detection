@@ -1,80 +1,106 @@
-
 import cv2 as cv
 import os
-
-from structure.helpers import get_path_to_cur_dir
-from structure.helpers import ensure_directory_exists
-
+import face_recognition
+from structure.helpers import get_path_to_cur_dir, ensure_directory_exists
 
 frame_count = 0
-#output_dir = "./photos"
 output_dir = None
-
-#os.makedirs(output_dir , exist_ok=True)
 haarcascades = "./haarcascade_frontalface_default.xml"
-
 
 
 class VideoProcessor:
     def __init__(self):
         self.cam = cv.VideoCapture(0)
-        self.codec = cv.VideoWriter_fourcc(*"XVID")
         if not self.cam.isOpened():
-            print("error opening camera")
+            print("Error opening camera")
             exit()
 
+
 class VoiceProcessor:
-    def __init__(self   ):
+    def __init__(self):
         self.question_name = input("Provide your name: ")
 
     def set_output_dir(self):
         global output_dir
-        output_dir=  self.question_name
+        output_dir = self.question_name
 
 
+def load_reference_face(reference_folder):
+    reference_files = os.listdir(reference_folder)
+    if not reference_files:
+        print("No reference photo found.")
+        return None
 
+    reference_image_path = os.path.join(reference_folder, reference_files[0])
+    reference_image = face_recognition.load_image_file(reference_image_path)
+    reference_encodings = face_recognition.face_encodings(reference_image)
 
+    if reference_encodings:
+        print(f"Loaded reference face from {reference_image_path}")
+        return reference_encodings[0]
+    else:
+        print("No face detected in the reference photo.")
+        return None
 
 
 voice = VoiceProcessor()
 voice.set_output_dir()
 path_with_name = get_path_to_cur_dir(output_dir)
 ensure_directory_exists(path_with_name)
-vp =VideoProcessor()
 
-
+reference_encoding = load_reference_face(path_with_name)
+vp = VideoProcessor()
+reference_photo_taken = reference_encoding is not None
 
 while True:
-    # Capture frame-by-frame
     ret, frame = vp.cam.read()
-
-    # if frame is read correctly ret is True
     if not ret:
-        print("error in retrieving frame")
+        print("Error in retrieving frame")
         break
 
+    if not reference_photo_taken:
+        cv.imshow("Capture Reference Photo", frame)
 
+        # Save reference photo when 's' is pressed
+        if cv.waitKey(1) == ord("s"):
+            reference_photo_path = os.path.join(path_with_name, "reference_photo.jpg")
+            if cv.imwrite(reference_photo_path, frame):
+                print(f"Reference photo saved at {reference_photo_path}")
+                reference_encoding = load_reference_face(path_with_name)
+                reference_photo_taken = True
+            else:
+                print("Failed to save reference photo")
 
-    facecascade = cv.CascadeClassifier(haarcascades)
-    img = cv.cvtColor(frame, cv.COLOR_BGR2RGB)
-    img_gray_mask = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
+        if cv.waitKey(1) == ord("q"):
+            print("Exiting without saving a reference photo.")
+            vp.cam.release()
+            cv.destroyAllWindows()
+            exit()
 
-    face = facecascade.detectMultiScale(img_gray_mask , 1.1 , 4)
-   # for(x , y,w ,h) in face:
-    #    face_rectangle = img[y:y+h , x:x+w] #slicing face from the image
+    else:
+        img_rgb = cv.cvtColor(frame, cv.COLOR_BGR2RGB)
+        face_locations = face_recognition.face_locations(img_rgb)
 
-    #    cv.rectangle(img , (x , y) , (x+w, y+h) ,(0,255,0),2)
-    cv.imshow('frame', img)
+        for (top, right, bottom, left) in face_locations:
+            face_frame = img_rgb[top:bottom, left:right]
 
-    if cv.waitKey(1) == ord("s"):
-        photo_path = os.path.join(path_with_name, f"photo_{frame_count}.jpg")
-        if cv.imwrite(photo_path, img):
-            print(f"Saved {photo_path}")
-        else:
-            print("Failed to save image")
-        frame_count += 1
+            current_encodings = face_recognition.face_encodings(img_rgb, [(top, right, bottom, left)])
+
+            if current_encodings:
+                current_encoding = current_encodings[0]
+                match = face_recognition.compare_faces([reference_encoding], current_encoding)[0]
+                distance = face_recognition.face_distance([reference_encoding], current_encoding)[0]
+
+                label_text = f"Match: {output_dir} (Dist: {round(distance, 2)})" if match else "No Match"
+                color = (0, 255, 0) if match else (0, 0, 255)
+
+                cv.rectangle(frame, (left, top), (right, bottom), color, 2)
+                cv.putText(frame, label_text, (left, top - 10), cv.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
+
+        cv.imshow('Face Recognition', frame)
+
     if cv.waitKey(1) == ord('q'):
         break
+
 vp.cam.release()
-# file.release()
 cv.destroyAllWindows()
