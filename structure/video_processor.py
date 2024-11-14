@@ -15,13 +15,7 @@ class VideoProcessor:
             exit()
 
 
-class VoiceProcessor:
-    def __init__(self):
-        self.question_name = input("Provide your name: ")
-        self.output_dir = None
 
-    def set_output_dir(self):
-        self.output_dir = self.question_name
 
 
 def load_reference_face(reference_folder):
