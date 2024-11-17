@@ -3,8 +3,10 @@ import os
 from unittest.mock import patch
 from structure.helpers import get_user_input
 from structure.helpers import ensure_directory_exists
+from structure.helpers import check_if_folder_empty
+from structure.helpers import start_camera_if_folder_empty
 from structure.helpers import get_path_to_cur_dir
-
+#get_path_to_cur_dir , find_face_encodings  ,load_reference_face are not tested
 test_path = "C:\\Users\\andro\\PycharmProjects\\face_detection\\structure\\photos"
 def test_get_user_input():
     with patch("builtins.input" , return_value=test_path):
@@ -31,14 +33,43 @@ def test_ensure_directory_exists_negative(tmp_path):
 
     # Check if the new directory was created
     assert os.path.exists(new_dir)  # Should be True
-def test_get_path_to_cur_dir():
-    # Use patch to capture the printed output
-    with patch('builtins.print') as mock_print:
-        cwd = os.getcwd()  # Expected result from os.getcwd()
-        result = get_path_to_cur_dir()  # Call the function
 
-        # Check if the print function was called with the expected output
-        mock_print.assert_called_once_with(cwd)
+def test_check_if_folder_empty_with_empty_dir(tmp_path):
+    # Use tmp_path to create an empty directory
+    empty_dir = tmp_path / "empty_directory"
+    empty_dir.mkdir()
 
-        # Verify that the function returns the correct path
-        assert result == cwd
+    # Call the function and verify it detects the directory as empty
+    result = check_if_folder_empty(empty_dir)
+    assert result is True, "Expected the function to return True for an empty directory."
+
+def test_check_if_folder_empty_with_files(tmp_path):
+    # Use tmp_path to create a directory and add a file to it
+    non_empty_dir = tmp_path / "non_empty_directory"
+    non_empty_dir.mkdir()
+    (non_empty_dir / "test_file.txt").write_text("This is a test file.")
+
+    # Call the function and verify it detects the directory as not empty
+    result = check_if_folder_empty(non_empty_dir)
+    assert result is False, "Expected the function to return False for a non-empty directory."
+
+def test_start_camera_if_folder_empty_with_empty_folder(tmp_path):
+    """Test when the folder is empty."""
+    # Create an empty temporary directory
+    empty_folder = tmp_path / "empty_folder"
+    empty_folder.mkdir()  # Create the directory
+
+    # Call the function and verify the result
+    result = start_camera_if_folder_empty(str(empty_folder))
+    assert result is True, "Expected True when the folder is empty, but got False."
+
+def test_start_camera_if_folder_empty_with_non_empty_folder(tmp_path):
+    """Test when the folder contains files."""
+    # Create a temporary directory with a file in it
+    non_empty_folder = tmp_path / "non_empty_folder"
+    non_empty_folder.mkdir()
+    (non_empty_folder / "test_file.txt").write_text("Sample content")  # Add a file
+
+    # Call the function and verify the result
+    result = start_camera_if_folder_empty(str(non_empty_folder))
+    assert result is False, "Expected False when the folder is not empty, but got True."

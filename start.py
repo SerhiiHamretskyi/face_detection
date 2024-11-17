@@ -2,15 +2,13 @@
 import os
 import face_recognition
 import cv2 as cv
-import time  # Import time module
-import speech_recognition as sr
+import time
 import pyttsx3
 
 from structure.helpers import get_path_to_cur_dir, ensure_directory_exists
 from structure.video_processor import load_reference_face, VideoProcessor
 from structure.voice_processor import VoiceProcessor
 
-r = sr.Recognizer()
 engine = pyttsx3.init()
 voice = VoiceProcessor()
 voice.set_output_dir()
@@ -25,12 +23,21 @@ reference_photo_taken = reference_encoding is not None
 last_comparison_time = time.time()
 
 # Set default label and color
+last_message_time = 0
+message_interval = 120
+
 label_text = "No Face Detected"
-color = (0, 255, 255)# Yellow for "no face detected"
-engine.say("Analyzing your face ")
+color = (0, 255, 255)  # Yellow for "no face detected"
+engine.say("Analyzing your face")
 engine.runAndWait()
 
+# Flags to track if message was spoken
+recognized_spoken = False
+unrecognized_spoken = False
+
 while True:
+    current_time2 = time.time()
+
     ret, frame = vp.cam.read()
     if not ret:
         print("Error in retrieving frame")
@@ -64,9 +71,9 @@ while True:
             cv.rectangle(frame, (left, top), (right, bottom), color, 2)
             cv.putText(frame, label_text, (left, top - 10), cv.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
 
-        # Perform face comparison every 30 seconds
+        # Perform face comparison every 5 seconds
         current_time = time.time()
-        if current_time - last_comparison_time >= 5:  # 10 seconds
+        if current_time - last_comparison_time >= 10:
             last_comparison_time = current_time  # Update last comparison time
 
             # Run face encoding and comparison
@@ -81,7 +88,27 @@ while True:
 
                     # Update label and color based on match result
                     label_text = f"Match: {voice.output_dir} (Dist: {round(distance, 2)})" if match else "No Match"
-                    color = (0, 255, 0)   if match else (0, 0, 255)  # Green for match, red for no match
+
+                    # If match and message not spoken, play recognized message once
+                    if match and not recognized_spoken:
+                        color = (0, 255, 0)
+                        engine.say(f"Hello {voice.output_dir}")
+                        engine.runAndWait()
+                        recognized_spoken = True
+                        unrecognized_spoken = False  # Reset unrecognized message flag
+
+                    # If no match and message not spoken, play unrecognized message once
+                    elif not match and not unrecognized_spoken:
+                        color = (0, 0, 255)
+                        engine.say("Hello, but I don't recognize your face")
+                        engine.runAndWait()
+                        unrecognized_spoken = True
+                        recognized_spoken = False  # Reset recognized message flag
+
+        # Reset flags when no face is detected
+        if not face_locations:
+            recognized_spoken = False
+            unrecognized_spoken = False
 
         # Display the frame
         cv.imshow('Face Recognition', frame)

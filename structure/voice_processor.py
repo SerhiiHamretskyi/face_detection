@@ -38,4 +38,3 @@ class VoiceProcessor:
         self.output_dir = self.question_name
 
 
-voice = VoiceProcessor()

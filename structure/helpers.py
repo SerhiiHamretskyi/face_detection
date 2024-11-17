@@ -29,8 +29,10 @@ def get_path_to_cur_dir(name):
 def check_if_folder_empty(path):
     if not os.listdir(path):
         print("No files found in the directory.")
+        return  True
     else:
         print("Some files found in the directory")
+        return False
 
 def find_face_encodings(image_path):
     # Read the image
