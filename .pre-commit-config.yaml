@@ -1,0 +1,18 @@
+repos:
+  - repo: https://github.com/psf/black
+    rev: 24.8.0
+    hooks:
+      - id: black
+  - repo: git@github.com:PyCQA/flake8.git
+    rev: 7.1.1
+    hooks:
+      - id: flake8
+        args: [ --exclude, venv ]
+  - repo: local
+    hooks:
+      - id: run-unittests
+        name: Run Unit Tests
+        entry: python -m unittest discover -s tests
+        language: system
+        always_run: true
+        pass_filenames: false
