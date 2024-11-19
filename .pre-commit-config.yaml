@@ -10,9 +10,9 @@ repos:
         args: [ --exclude, venv ]
   - repo: local
     hooks:
-      - id: run-unittests
-        name: Run Unit Tests
-        entry: python -m unittest discover -s tests
+      - id: run-pytest
+        name: Run Pytest
+        entry:  python  -m pytest --cov=.
         language: system
         always_run: true
         pass_filenames: false
