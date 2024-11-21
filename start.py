@@ -1,4 +1,3 @@
-
 import os
 import face_recognition
 import cv2 as cv
@@ -67,9 +66,17 @@ while True:
         face_locations = face_recognition.face_locations(img_rgb)
 
         # Draw rectangles continuously around detected faces
-        for (top, right, bottom, left) in face_locations:
+        for top, right, bottom, left in face_locations:
             cv.rectangle(frame, (left, top), (right, bottom), color, 2)
-            cv.putText(frame, label_text, (left, top - 10), cv.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
+            cv.putText(
+                frame,
+                label_text,
+                (left, top - 10),
+                cv.FONT_HERSHEY_SIMPLEX,
+                0.5,
+                color,
+                2,
+            )
 
         # Perform face comparison every 5 seconds
         current_time = time.time()
@@ -77,17 +84,27 @@ while True:
             last_comparison_time = current_time  # Update last comparison time
 
             # Run face encoding and comparison
-            for (top, right, bottom, left) in face_locations:
+            for top, right, bottom, left in face_locations:
                 face_frame = img_rgb[top:bottom, left:right]
-                current_encodings = face_recognition.face_encodings(img_rgb, [(top, right, bottom, left)])
+                current_encodings = face_recognition.face_encodings(
+                    img_rgb, [(top, right, bottom, left)]
+                )
 
                 if current_encodings:
                     current_encoding = current_encodings[0]
-                    match = face_recognition.compare_faces([reference_encoding], current_encoding)[0]
-                    distance = face_recognition.face_distance([reference_encoding], current_encoding)[0]
+                    match = face_recognition.compare_faces(
+                        [reference_encoding], current_encoding
+                    )[0]
+                    distance = face_recognition.face_distance(
+                        [reference_encoding], current_encoding
+                    )[0]
 
                     # Update label and color based on match result
-                    label_text = f"Match: {voice.output_dir} (Dist: {round(distance, 2)})" if match else "No Match"
+                    label_text = (
+                        f"Match: {voice.output_dir} (Dist: {round(distance, 2)})"
+                        if match
+                        else "No Match"
+                    )
 
                     # If match and message not spoken, play recognized message once
                     if match and not recognized_spoken:
@@ -111,9 +128,9 @@ while True:
             unrecognized_spoken = False
 
         # Display the frame
-        cv.imshow('Face Recognition', frame)
+        cv.imshow("Face Recognition", frame)
 
-    if cv.waitKey(1) == ord('q'):
+    if cv.waitKey(1) == ord("q"):
         break
 
 vp.cam.release()

@@ -1,4 +1,3 @@
-
 import speech_recognition as sr
 import pyttsx3
 
@@ -33,8 +32,5 @@ class VoiceProcessor:
             tts_engine.runAndWait()
             return None
 
-
     def set_output_dir(self):
         self.output_dir = self.question_name
-
-

@@ -1,10 +1,6 @@
 import cv2 as cv
 import os
 import face_recognition
-from structure.helpers import get_path_to_cur_dir, ensure_directory_exists
-
-
-
 
 
 class VideoProcessor:
@@ -13,9 +9,6 @@ class VideoProcessor:
         if not self.cam.isOpened():
             print("Error opening camera")
             exit()
-
-
-
 
 
 def load_reference_face(reference_folder):

@@ -1,9 +1,11 @@
 import unittest
 from unittest import mock
 import cv2 as cv
+
+
 class TestCameraCapture(unittest.TestCase):
 
-    @mock.patch('cv2.VideoCapture')
+    @mock.patch("cv2.VideoCapture")
     def test_camera_initialization_success(self, MockVideoCapture):
         # Mock the behavior of the camera initialization
         mock_cam = mock.Mock()
@@ -16,7 +18,7 @@ class TestCameraCapture(unittest.TestCase):
         # Test that the camera was successfully opened
         self.assertTrue(cam.isOpened())
 
-    @mock.patch('cv2.VideoCapture')
+    @mock.patch("cv2.VideoCapture")
     def test_camera_initialization_failure(self, MockVideoCapture):
         # Mock the behavior of the camera initialization failure
         mock_cam = mock.Mock()
@@ -58,6 +60,7 @@ class TestCameraCapture(unittest.TestCase):
     #
     #     # Test that waitKey is called and the loop breaks with 'q' key press
     #     mock_waitKey.assert_called_once_with(1)  # Default argument to cv.waitKey
+
 
 #     @mock.patch('cv2.VideoCapture')
 #     @mock.patch('cv2.waitKey', return_value=ord('q'))

@@ -1,0 +1,16 @@
+version: "3.8"
+
+services:
+  my-service:
+    build: .
+    container_name: my-app-container
+    devices:
+      - "/dev/snd"         # Access to sound devices
+      - "/dev/video0:/dev/video0"   # Access to camera (replace with your camera device)
+    environment:
+      - PULSE_SERVER=unix:/run/user/1000/pulse/native  # For audio on the host system
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw  # For display (if you need GUI)
+    network_mode: "host"  # Optional: if you need to share network with host (useful for some services)
+    security_opt:
+      - "seccomp:unconfined"  # Allows access to devices and system calls

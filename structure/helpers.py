@@ -1,8 +1,9 @@
 import os
 import cv2 as cv
 import face_recognition
-#"C:\\Users\\andro\\PycharmProjects\\face_detection\\structure\\photos"
-#"C:\\Users\\andro\\PycharmProjects\\face_detection\\Serhii"
+
+# "C:\\Users\\andro\\PycharmProjects\\face_detection\\structure\\photos"
+# "C:\\Users\\andro\\PycharmProjects\\face_detection\\Serhii"
 # Specify the absolute path
 
 
@@ -20,8 +21,8 @@ def ensure_directory_exists(path):
 
 
 def get_path_to_cur_dir(name):
-    cwd = os.path.join(os.getcwd() , "photos")
-    nwd = os.path.join(cwd,name)
+    cwd = os.path.join(os.getcwd(), "photos")
+    nwd = os.path.join(cwd, name)
     print(nwd)
     return nwd
 
@@ -29,10 +30,11 @@ def get_path_to_cur_dir(name):
 def check_if_folder_empty(path):
     if not os.listdir(path):
         print("No files found in the directory.")
-        return  True
+        return True
     else:
         print("Some files found in the directory")
         return False
+
 
 def find_face_encodings(image_path):
     # Read the image
