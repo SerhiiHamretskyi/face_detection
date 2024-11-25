@@ -1,81 +1,89 @@
 # Face Recognition Camera with Voice Notifications
 
-
 ## Overview
-This project is a Python-based face recognition system with voice notifications. It uses real-time video input to detect and recognize faces. Recognized individuals are greeted with a voice message, while unrecognized faces trigger a different message. The system is designed for security and personalized user experiences.
+A Python-based face recognition system that detects and recognizes faces in real time. It provides voice feedback to greet recognized individuals and notify about unrecognized faces, ideal for security or personalized interactions.
 
 ## Features
+- **Real-Time Face Detection**: High-performance face detection using OpenCV and `face_recognition`.
+- **Face Recognition**: Matches live faces against a stored reference photo.
+- **Voice Feedback**: Uses `pyttsx3` for personalized voice notifications.
+- **Interactive Setup**: Allows easy setup of reference photos.
+- **Visual Feedback**: Displays video with annotations for detected faces.
 
-- **Real-Time Face Detection**: Uses OpenCV and the ```face_recognition``` library for high-performance face detection.
-- **Face Recognition**: Compares faces with a saved reference photo.
-- **Voice Feedback**: Provides personalized voice messages for recognized and unrecognized faces using ```pyttsx3```.
-- **Interactive Setup**: Allows users to capture and set a reference photo in real-time.
-- **Simple GUI Display**: Shows the video feed with annotations for detected and recognized faces.
-
-## Technologies Used
-
-- **Programming Language**: Python
-- **Libraries**:
-  - OpenCV - For video processing and GUI.
-  - face_recognition - For face detection and encoding.
-  - pyttsx3 - For text-to-speech voice notifications.
+## Technologies
+- **Python 3.8+**
+- **Libraries**: 
+  - OpenCV (video processing and GUI)
+  - face_recognition (face detection and encoding)
+  - pyttsx3 (text-to-speech)
 
 ## Getting Started
-Prerequisites
-Make sure you have the following installed:
-  - Python 3.8 or higher
-  - pip (Python package manager)
-  - A webcam (or any camera device recognized by your system)
 
-### Running the Program Locally   
-You can execute the program using the following bash commands:
+### Prerequisites
+Ensure you have:
+- Python 3.8 or higher
+- pip (Python package manager)
+- A camera (webcam or compatible device)
+- [Docker](https://www.docker.com/) and [Docker Compose](https://docs.docker.com/compose/) (for Docker setup)
 
- Clone the repository
+---
 
+### Running Locally
+Clone the repository, install dependencies, and run the program:
 ```bash
+# Clone the repository
 git clone https://github.com/SerhiiHamretskyi/face_detection.git
 cd face-analyzer
-```
 
- Install dependencies
-```bash
+# Install dependencies
 pip install -r requirements.txt
-```
- Run the program
 
+# Run the program
+python start.py
+```
+
+---
+
+### Running with Docker 
+Run the program using Docker for easy deployment:
+
+1.Build the Docker Image
 ```bash
-python main.py
+docker build -t face-analyzer .
 ```
 
-### Running the Program in Docker Compose
-
-   1. **Ensure Docker and Docker Compose are Installed**: 
-   Make sure you have Docker and Docker Compose installed on your machine. 
-   2. **Prepare Your Project**: 
-   Your project directory should contain the following files:
-   - `docker-compose.yml`
-   - `Dockerfile` for analyzing service
-   - Your source code files (including `start.py`)
-
-   3. **Build and Run the Services**:
-Open your terminal, navigate to your project directory, and run the following command:
-   ```bash
-   # Build the Docker image
-docker build -t face-analyzer 
-   ```
-   ```bash
-   # It sets up permissions for GUI access, which is required before running the container.
+2.Allow GUI Access (for programs with visual components)
+```bash
 xhost +local:docker
-   ```
-   ```bash
-   # Run the container
-docker run --rm -it face-analyzer
-   ```
-   This commands will build your face_detection image and run it in the container.
-### Summary
+```
 
-- **Docker Compose**: Good for consistency and ease of deployment across different environments.
-  
-- **Local Execution**: Useful for development or testing without Docker. Ensure you have all the services running locally.
+3.Run the Docker Container
+```bash
+docker run --rm -it -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix face-analyzer
+```
 
-## Usage
+---
+
+### Usage
+
+1.Set up a Reference Photo:
+
+-On the first run, the program asks for your name, creating a folder for you.
+
+-If no reference photo exists, the program lets you capture one (you can make it with 's' button). 
+
+2.Recognition Process:
+
+-The program detects your face and compares it with the stored reference photo.
+
+-If recognized, it greets you by name.
+
+-If unrecognized, it notifies you accordingly.
+
+3.Quit:
+
+-You can exit the program by pressing the 'q' key, but make sure your keyboard is set to English.
+
+## License
+
+This project is licensed under the MIT License. See the LICENSE file for details.
