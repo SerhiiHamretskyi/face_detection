@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: webcam_microphone_app
+    devices:
+      - "/dev/video0:/dev/video0"  # Access the webcam (Linux)
+      - "/dev/snd:/dev/snd"        # Access the sound devices
+      - "/dev/audio:/dev/audio"    # For some systems, this may also be needed
+    environment:
+      - DISPLAY=$DISPLAY           # Allows access to the host's display (for GUI apps)
+      - PULSE_SERVER=unix:/run/user/1000/pulse/native  # PulseAudio server connection for sound
+      - QT_X11_NO_MITSHM=1          # Fix for some Qt apps not working with shared memory
+    privileged: true               # Gives the container additional permissions
+    network_mode: "host"           # This can help with accessing the microphone and sound in some cases (Linux-specific)
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:ro  # For GUI apps on Linux to share the X11 display
+      - /run/user/1000/pulse/native:/run/user/1000/pulse/native  # Allows PulseAudio access (adjust user ID)
