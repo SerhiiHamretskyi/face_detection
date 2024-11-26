@@ -1,3 +1,8 @@
+<!-- GitHub badges -->
+[![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+
+---
+
 # Face Recognition Camera with Voice Notifications
 
 ## Overview
@@ -49,7 +54,7 @@ Run the program using Docker for easy deployment:
 
 1.Build the Docker Image
 ```bash
-docker build -t face-analyzer .
+docker-compose build
 ```
 
 2.Allow GUI Access (for programs with visual components)
@@ -59,7 +64,7 @@ xhost +local:docker
 
 3.Run the Docker Container
 ```bash
-docker run --rm -it -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix face-analyzer
+docker-compose up
 ```
 
 ---
