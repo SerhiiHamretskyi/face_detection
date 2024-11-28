@@ -28,7 +28,7 @@ class VoiceProcessor:
             return text
 
         except sr.UnknownValueError:
-            print("Sorry, I could not understand the audio.")
+            # print("Sorry, I could not understand the audio.")
             self.tts_engine.say("Sorry, I could not understand the audio.")
             self.tts_engine.runAndWait()
             return None
