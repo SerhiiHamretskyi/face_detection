@@ -26,8 +26,8 @@ jobs:
 
       - name: Build and tag Docker image
         run: |
-            docker build -t serhiiham/face_analyzer:${{ github.ref_name }} .
-            docker tag serhiiham/face_analyzer:${{ github.ref_name }} serhiiham/face_analyzer:latest
+            docker build -t face_analyzer:${{ github.ref_name }} .
+            docker tag face_analyzer:${{ github.ref_name }} serhiiham/face_analyzer:latest
 
       - name: Debug step
         run: |
