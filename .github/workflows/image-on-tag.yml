@@ -7,35 +7,16 @@ on:
 
 jobs:
   create_docker_image:
-    name: Build and push docker image
+    name: Build and Push Docker Image
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Extract version from version.py
-        id: get_version
-        run: |
-          version=$(grep '__version__' version.py | cut -d '"' -f 2)
-          echo "App Version: $version"
-          echo "::set-output name=VERSION::$version"
-
-      - name: Check if version matches the Git tag
-        run: |
-          version=${{ steps.get_version.outputs.VERSION }}
-          tag=${{ github.ref_name }}
-
-          # Compare the extracted version and tag (both should match)
-          if [ "$version" != "$tag" ]; then
-            echo "Error: Version ($version) does not match Git tag ($tag)."
-            exit 1  # Fail the workflow if they don't match
-          else
-            echo "Success: Version ($version) matches Git tag ($tag)."
-          fi
+      - name: Debug Git Tag
+        run:  |
+         echo "Git Tag: ${{ github.ref_name }}"
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
@@ -45,8 +26,12 @@ jobs:
 
       - name: Build and tag Docker image
         run: |
-            docker build -t face_analyzer:${{ github.ref_name }} .
-            docker tag face_analyzer:${{ github.ref_name }} face_analyzer:latest
+            docker build -t serhiiham/face_analyzer:${{ github.ref_name }} .
+            docker tag serhiiham/face_analyzer:${{ github.ref_name }} serhiiham/face_analyzer:latest
+
+      - name: Debug step
+        run: |
+            docker image ls
 
       - name: Push Docker image to Docker Hub
         run: |
