@@ -1,3 +1,4 @@
+
 name: Build Image on Tag Push
 
 on:
@@ -27,15 +28,14 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build and tag Docker image for multiple platforms
+      - name: Build and Push Docker Image for Multiple Platforms
         run: |
-          docker buildx build --platform linux/amd64,linux/arm64 -t serhiiham/face_analyzer:${{ github.ref_name }} --push .
+          docker buildx build \
+            --platform linux/amd64,linux/arm64 \
+            -t serhiiham/face_analyzer:${{ github.ref_name }} \
+            -t serhiiham/face_analyzer:latest \
+            --push .
 
-      - name: Debug step
+      - name: Debug Images
         run: |
-          docker image ls
-
-      - name: Push Docker image to Docker Hub
-        run: |
-          docker push serhiiham/face_analyzer:${{ github.ref_name }}
-          docker push serhiiham/face_analyzer:latest
+          echo "Images have been pushed to Docker Hub: serhiiham/face_analyzer:${{ github.ref_name }} and serhiiham/face_analyzer:latest"
