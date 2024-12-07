@@ -15,8 +15,11 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Debug Git Tag
-        run:  |
-         echo "Git Tag: ${{ github.ref_name }}"
+        run: |
+          echo "Git Tag: ${{ github.ref_name }}"
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
@@ -24,14 +27,13 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build and tag Docker image
+      - name: Build and tag Docker image for multiple platforms
         run: |
-            docker build -t serhiiham/face_analyzer:${{ github.ref_name }} .
-            docker tag serhiiham/face_analyzer:${{ github.ref_name }} serhiiham/face_analyzer:latest
+          docker buildx build --platform linux/amd64,linux/arm64 -t serhiiham/face_analyzer:${{ github.ref_name }} --push .
 
       - name: Debug step
         run: |
-            docker image ls
+          docker image ls
 
       - name: Push Docker image to Docker Hub
         run: |
