@@ -13,15 +13,18 @@ def get_user_input():
 
 
 def ensure_directory_exists(path):
-    if os.path.exists(path):
-        print("The directory already exists ")
-    else:
-        os.mkdir(path)
-        print(f"Directory '{path}' created successfully")
+    os.makedirs(path, exist_ok=True)  # Create all intermediate directories if they do not exist
 
 
 def get_path_to_cur_dir(name):
-    cwd = os.path.join(os.getcwd(), "photos")
+    # Check if we're inside the container
+    if os.path.exists("/app/photos"):
+        # If we're inside the container, use the mounted path
+        cwd = "/app/photos"
+    else:
+        # Otherwise, use the local path
+        cwd = os.path.join(os.getcwd(), "photos")
+
     nwd = os.path.join(cwd, name)
     print(nwd)
     return nwd
