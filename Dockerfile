@@ -23,6 +23,7 @@ RUN apt-get update && apt-get install -y \
     qtbase5-dev \
     qtchooser \
     qt5-qmake qtbase5-dev-tools \
+    flac \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Set the working directory in the container
