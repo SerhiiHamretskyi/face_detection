@@ -34,7 +34,7 @@ Ensure you have:
 ---
 
 ### Running Locally
-Clone the repository, install dependencies, and run the program:
+Clone the repository, install dependencies, and run the program. Ensure that you have enough RAM on your device, as the program may consume significant memory and could cause the system to kill the process if resources are insufficient.
 ```bash
 # Clone the repository
 git clone https://github.com/SerhiiHamretskyi/face_detection.git
@@ -52,9 +52,10 @@ python start.py
 ### Running with Docker 
 Run the program using Docker for easy deployment:
 
-1.Build the Docker Image
+1.Pull the docker image.
+To pull the image from Docker Hub, run:
 ```bash
-docker-compose build
+docker pull serhiiham/face_analyzer
 ```
 
 2.Allow GUI Access (for programs with visual components)
@@ -62,10 +63,17 @@ docker-compose build
 xhost +local:docker
 ```
 
-3.Run the Docker Container
+3.Run the Docker image with this settings
+
+Once the image is pulled and GUI access is granted, you can run the container with the following command:
 ```bash
-docker-compose up
+docker run --rm --privileged \
+    -v /tmp/.X11-unix:/tmp/.X11-unix \
+    -e DISPLAY=$DISPLAY \
+    -e QT_QPA_PLATFORM_PLUGIN_PATH=/usr/lib/x86_64-linux-gnu/qt5/plugins \
+    <your-docker-image>
 ```
+This command mounts the X11 socket, sets the DISPLAY environment variable to allow GUI access, and specifies the path to the Qt platform plugins.
 
 ---
 
