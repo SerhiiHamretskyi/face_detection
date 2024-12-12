@@ -2,7 +2,7 @@ FROM python:3.9-slim
 
 # Install system-level dependencies
 RUN apt-get update && apt-get install -y \
-    libxcb-cursor0\
+    libxcb-cursor0 \
     pulseaudio \
     alsa-utils \
     libportaudio2 libportaudiocpp0 portaudio19-dev \
