@@ -2,9 +2,7 @@ import os
 import cv2 as cv
 import face_recognition
 
-# "C:\\Users\\andro\\PycharmProjects\\face_detection\\structure\\photos"
-# "C:\\Users\\andro\\PycharmProjects\\face_detection\\Serhii"
-# Specify the absolute path
+
 
 
 def get_user_input():
