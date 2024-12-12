@@ -11,6 +11,7 @@ services:
       - DISPLAY=$DISPLAY           # Allows access to the host's display (for GUI apps)
       - PULSE_SERVER=unix:/run/user/1000/pulse/native  # PulseAudio server connection for sound
       - QT_X11_NO_MITSHM=1          # Fix for some Qt apps not working with shared memory
+      - QT_QPA_PLATFORM_PLUGIN_PATH=/usr/lib/x86_64-linux-gnu/qt5/plugins  # Explicit Qt plugin path
     privileged: true               # Gives the container additional permissions
     network_mode: "host"           # This can help with accessing the microphone and sound
     volumes:
